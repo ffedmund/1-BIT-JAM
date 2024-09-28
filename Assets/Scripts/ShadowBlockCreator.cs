@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Rendering.Universal; // Add this for Light2D
 
 public class ShadowBlockCreator : MonoBehaviour
 {
@@ -10,7 +11,27 @@ public class ShadowBlockCreator : MonoBehaviour
     public LayerMask layerMask;          // Layer mask to filter raycast hits
     public Camera mainCamera;            // Reference to the main camera
 
+    private Light2D light2D;
+    private float lightOuterRadius;       // The outer radius of the light
+    private float lightInnerRadius;       // The inner radius of the light
     private Bounds cameraBounds;
+    private PlayerMovement playerMovement;
+
+    void Start()
+    {
+        // Get the Light2D component from the light source
+        light2D = lightSource.GetComponent<Light2D>();
+        playerMovement = player.GetComponent<PlayerMovement>();
+        if (light2D != null)
+        {
+            lightOuterRadius = light2D.pointLightOuterRadius; // Fetch the outer radius
+            lightInnerRadius = light2D.pointLightInnerRadius;
+        }
+        else
+        {
+            Debug.LogError("Light2D component not found on the light source.");
+        }
+    }
 
     void Update()
     {
@@ -18,10 +39,15 @@ public class ShadowBlockCreator : MonoBehaviour
         cameraBounds = OrthographicBounds(mainCamera);
 
         // Check if the light source is within the camera bounds (2D check, ignoring Z)
+        // and if the player is within the light's outer radius
         Vector3 lightPos2D = new Vector3(lightSource.position.x, lightSource.position.y, 0);
-        if (!cameraBounds.Contains(lightPos2D))
+        Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
+        Vector2 lightSourcePos2D = new Vector2(lightSource.position.x, lightSource.position.y);
+        float distanceToPlayer = Vector2.Distance(playerPos2D, lightSourcePos2D);
+
+        if (!cameraBounds.Contains(lightPos2D) || distanceToPlayer > lightOuterRadius)
         {
-            // Light source is out of camera view, clear shadows and exit
+            // Either light source is out of camera view or player is out of light's outer radius, clear shadows and exit
             ClearShadows();
             return;
         }
@@ -38,9 +64,13 @@ public class ShadowBlockCreator : MonoBehaviour
             for (int y = minTile.y; y <= maxTile.y; y++)
             {
                 Vector3Int tilePos = new Vector3Int(x, y, 0);
-                if (tilePos == playerTilePos)
+
+                // Skip the player's tile position and any tile within the light radius
+                Vector3 worldPos = tilemap.CellToWorld(tilePos) + tilemap.tileAnchor;
+                Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+                float distanceToTile = Vector2.Distance(lightSourcePos2D, worldPos2D);
+                if (tilePos == playerTilePos || distanceToTile <= lightInnerRadius)
                 {
-                    // Skip the player's tile position
                     if (tilemap.GetTile(tilePos) != null)
                     {
                         tilemap.SetTile(tilePos, null);
@@ -48,16 +78,12 @@ public class ShadowBlockCreator : MonoBehaviour
                     continue;
                 }
 
-                Vector3 worldPos = tilemap.CellToWorld(tilePos) + tilemap.tileAnchor;
-                Vector2 lightSourcePos2D = new Vector2(lightSource.position.x, lightSource.position.y);
-                Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
                 Vector2 direction = (worldPos2D - lightSourcePos2D).normalized;
-                float distanceToTile = Vector2.Distance(lightSourcePos2D, worldPos2D);
 
                 // Cast a ray from the light source to the tile position
                 RaycastHit2D hit = Physics2D.Raycast(lightSourcePos2D, direction, distanceToTile, layerMask);
 
-                if (hit.collider != null && hit.collider.transform == player)
+                if (hit.collider != null)
                 {
                     // Player is casting a shadow on this tile
                     if (tilemap.GetTile(tilePos) == null)
@@ -75,7 +101,58 @@ public class ShadowBlockCreator : MonoBehaviour
                 }
             }
         }
+
+        // Ensure no shadow tiles in front of the player's moving direction
+        ClearShadowInFrontOfPlayer();
     }
+
+    void LateUpdate()
+    {
+        // Ensure no tiles are set within the light radius
+        SweepLightRadius();
+    }
+
+    private void SweepLightRadius()
+    {
+        Vector2 lightSourcePos2D = new Vector2(lightSource.position.x, lightSource.position.y);
+        Vector3Int lightCellPos = tilemap.WorldToCell(lightSourcePos2D);
+        int radius = Mathf.CeilToInt(lightInnerRadius / tilemap.cellSize.x);
+
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                Vector3Int tilePos = new Vector3Int(lightCellPos.x + x, lightCellPos.y + y, 0);
+                Vector3 worldPos = tilemap.CellToWorld(tilePos) + tilemap.tileAnchor;
+                Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+                float distanceToTile = Vector2.Distance(lightSourcePos2D, worldPos2D);
+                if (distanceToTile < lightInnerRadius && tilemap.GetTile(tilePos) != null)
+                {
+                    tilemap.SetTile(tilePos, null);
+                }
+            }
+        }
+    }
+
+    private void ClearShadowInFrontOfPlayer()
+    {
+        Vector2 playerVelocity = playerMovement.GetMovement();
+        if (playerVelocity.sqrMagnitude > 0.01f) // A small threshold to ensure the player is moving
+        {
+            Vector2 moveDirection = playerVelocity.normalized;
+            moveDirection = moveDirection.y < 0? new Vector2(moveDirection.x, 0): moveDirection;
+            Vector2 playerPos = player.position;
+            Vector2 frontPos = playerPos + moveDirection * tilemap.cellSize.x; // Check one tile ahead
+
+            Vector3Int frontTilePos = tilemap.WorldToCell(frontPos);
+
+            if (tilemap.GetTile(frontTilePos) != null)
+            {
+                tilemap.SetTile(frontTilePos, null);
+            }
+        }
+    }
+
 
     // Method to get the orthographic bounds of the camera view
     private Bounds OrthographicBounds(Camera camera)
