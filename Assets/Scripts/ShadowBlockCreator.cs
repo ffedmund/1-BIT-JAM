@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.Rendering.Universal; // Add this for Light2D
+using UnityEngine.Rendering.Universal;
+using System.Collections.Generic; // Add this for Light2D
 
 public class ShadowBlockCreator : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class ShadowBlockCreator : MonoBehaviour
     private float lightInnerRadius;       // The inner radius of the light
     private Bounds cameraBounds;
     private PlayerMovement playerMovement;
+    private List<Vector3Int> shadowTiles = new List<Vector3Int>();
+    private const int shadowCasterLayer = 7;
 
     void Start()
     {
@@ -45,7 +48,7 @@ public class ShadowBlockCreator : MonoBehaviour
         Vector2 lightSourcePos2D = new Vector2(lightSource.position.x, lightSource.position.y);
         float distanceToPlayer = Vector2.Distance(playerPos2D, lightSourcePos2D);
 
-        if (!cameraBounds.Contains(lightPos2D) || distanceToPlayer > lightOuterRadius)
+        if (distanceToPlayer > lightOuterRadius)
         {
             // Either light source is out of camera view or player is out of light's outer radius, clear shadows and exit
             ClearShadows();
@@ -83,12 +86,13 @@ public class ShadowBlockCreator : MonoBehaviour
                 // Cast a ray from the light source to the tile position
                 RaycastHit2D hit = Physics2D.Raycast(lightSourcePos2D, direction, distanceToTile, layerMask);
 
-                if (hit.collider != null)
+                if (hit.collider != null && hit.collider.gameObject.layer == shadowCasterLayer)
                 {
                     // Player is casting a shadow on this tile
                     if (tilemap.GetTile(tilePos) == null)
                     {
                         tilemap.SetTile(tilePos, solidTile);
+                        shadowTiles.Add(tilePos);
                     }
                 }
                 else
@@ -97,6 +101,7 @@ public class ShadowBlockCreator : MonoBehaviour
                     if (tilemap.GetTile(tilePos) != null)
                     {
                         tilemap.SetTile(tilePos, null);
+                        shadowTiles.RemoveAll(x => x.Equals(tilePos));
                     }
                 }
             }
@@ -167,20 +172,16 @@ public class ShadowBlockCreator : MonoBehaviour
     // Method to clear shadow tiles within the camera view bounds
     private void ClearShadows()
     {
-        Vector3Int minTile = tilemap.WorldToCell(cameraBounds.min);
-        Vector3Int maxTile = tilemap.WorldToCell(cameraBounds.max);
-
-        for (int x = minTile.x; x <= maxTile.x; x++)
+        foreach (Vector3Int tilePos in shadowTiles)
         {
-            for (int y = minTile.y; y <= maxTile.y; y++)
+            if (tilemap.GetTile(tilePos) != null)
             {
-                Vector3Int tilePos = new Vector3Int(x, y, 0);
-                if (tilemap.GetTile(tilePos) != null)
-                {
-                    tilemap.SetTile(tilePos, null);
-                }
+                tilemap.SetTile(tilePos, null);
             }
         }
+
+        // Clear the list of shadow tiles
+        shadowTiles.Clear();
     }
 
     // Method to get the player's rounded tile position based on light source

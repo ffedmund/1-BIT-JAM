@@ -8,9 +8,9 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;         // A position marking where to check if the player is grounded
     public string groundTag = "Ground";   // Tag to identify ground objects
 
-    private Rigidbody2D rb;
-    private Vector2 movement;
-    private bool isGrounded;
+    protected Rigidbody2D rb;
+    protected Vector2 movement;
+    protected bool isGrounded;
     private float groundCheckRadius = 0.2f; // Radius of the ground check
 
     void Start()
@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         // Apply the velocity to the Rigidbody2D
         rb.velocity = movement;

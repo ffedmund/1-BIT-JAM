@@ -14,8 +14,8 @@ TagManager:
   - UI
   - Shadow
   - ShadowCaster
-  - 
-  - 
+  - ShadowObject
+  - Interactable
   - 
   - 
   - 
@@ -41,4 +41,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 2235350499
     locked: 0
