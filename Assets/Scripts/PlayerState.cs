@@ -47,6 +47,7 @@ public class PlayerState : MonoBehaviour
         {
             // Switching to normal state
             currentState = PlayerStates.Normal;
+            shadowPlayer.GetComponent<PlayerController>().ReleaseKey();
             shadowPlayer.SetActive(false);
             currentMovement = normalPlayer.GetComponent<PlayerMovement>();
             currentMovement.enabled = true;

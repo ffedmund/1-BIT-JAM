@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         // Get horizontal input from the player
         movement.x = Input.GetAxisRaw("Horizontal");
@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    protected virtual void FixedUpdate()
+    void FixedUpdate()
     {
         // Apply the velocity to the Rigidbody2D
         rb.velocity = movement;

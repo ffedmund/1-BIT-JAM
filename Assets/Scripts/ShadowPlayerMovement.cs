@@ -4,21 +4,39 @@ public class ShadowPlayerMovement : PlayerMovement
 {
     public Transform normalPlayer;  // Reference to the normal player
     public Camera mainCamera;       // Reference to the main camera
+    public float raycastDistance = 20;
+    public LayerMask shadowLayer;
 
-    protected override void FixedUpdate()
+    private PlayerState playerState;
+
+    void Start()
+    {
+        playerState = transform.parent.GetComponent<PlayerState>();
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        // Perform a raycast downwards to check for a shadow layer collider
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, raycastDistance, shadowLayer);
+
+        if (hit.collider == null)
+        {
+            // There is no shadow layer collider beneath the player, perform your desired action here
+            playerState.SwitchState();
+        }   
+    }
+
+    private void FixedUpdate() {
+        ShadowMovementHandler();
+    }
+
+    private void ShadowMovementHandler()
     {
         Vector2 newPosition = rb.position + movement * Time.fixedDeltaTime;
-
-        if (IsNormalPlayerWithinCameraBounds() || IsMovingTowardsNormalPlayer(newPosition))
-        {
-            // Call the base FixedUpdate to apply movement
-            base.FixedUpdate();
-        }
-        else
-        {
-            // Only stop horizontal movement, allow vertical velocity (including gravity)
-            rb.velocity = new Vector2(0, rb.velocity.y <= 0? rb.velocity.y:0);
-        }
+        bool canMove = IsNormalPlayerWithinCameraBounds() || IsMovingTowardsNormalPlayer(newPosition);
+        rb.velocity = canMove? movement:new Vector2(0,rb.velocity.y);
     }
 
     // Check if the normal player is within the camera bounds
@@ -39,11 +57,8 @@ public class ShadowPlayerMovement : PlayerMovement
 
         // Check if moving towards the normal player horizontally
         bool isMovingHorizontallyTowards = Mathf.Sign(toNormalPlayer.x) == Mathf.Sign(movementDirection.x);
-        
-        // Check if moving towards the normal player vertically
-        bool isMovingVerticallyTowards = Mathf.Sign(toNormalPlayer.y) == Mathf.Sign(movementDirection.y);
 
         // Allow movement if moving towards the normal player in either direction
-        return isMovingHorizontallyTowards || isMovingVerticallyTowards;
+        return isMovingHorizontallyTowards;
     }
 }
