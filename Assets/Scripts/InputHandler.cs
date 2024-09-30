@@ -22,12 +22,14 @@ public class InputHandler : MonoBehaviour
         {
             playerState.SwitchState();
         }
-        if(InteractHandler != null)
+        if(Input.GetKeyDown(KeyCode.E))
         {
-            if(Input.GetKeyDown(KeyCode.E))
-            {
-                InteractHandler.Invoke((playerState.currentState == PlayerStates.Shadow? playerState.shadowPlayer: playerState.normalPlayer).transform);
-            }
+            InteractHandler?.Invoke((playerState.currentState == PlayerStates.Shadow? playerState.shadowPlayer: playerState.normalPlayer).transform);
         }
+        if(Input.GetKeyDown(KeyCode.F) && playerState.currentState == PlayerStates.Normal && playerState.normalPlayer.TryGetComponent(out SwordAttacker attacker))
+        {
+            attacker.Attack(new Vector2(inputMovement.x<0?-1:1,inputMovement.y), playerState.normalPlayer);
+        }
+
     }
 }

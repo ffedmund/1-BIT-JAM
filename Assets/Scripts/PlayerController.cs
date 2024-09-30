@@ -1,18 +1,23 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
     public Transform keyHolder; // The position where the key will follow the player
     public float floatAmplitude = 0.5f; // Amplitude of the floating effect
     public float floatFrequency = 1f; // Frequency of the floating effect
     public InputHandler inputHandler;
 
     private GameObject collectedKey;
+    private PlayerStats playerStats;
     private Vector3 keyInitialLocalPosition;
     private float floatTimer;
 
     private void Start() {
         inputHandler = transform.parent.GetComponent<InputHandler>();
+        playerStats = transform.parent.GetComponent<PlayerStats>();
     }
 
     private void Update()

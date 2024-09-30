@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 6841926833324318046}
   - component: {fileID: 8743266926735998179}
   - component: {fileID: 8462897083092274002}
+  - component: {fileID: 6069046907197191444}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -95,6 +96,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerState: {fileID: 0}
+--- !u!114 &6069046907197191444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234926176156576592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ad7a2d7ce0644b9b8cb3cdd3b6d2a6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 3
+  curHp: 0
 --- !u!1 &982107849898128242
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,6 +186,7 @@ GameObject:
   - component: {fileID: 1065394537836937905}
   - component: {fileID: 1641866857729082226}
   - component: {fileID: 4608622854507037948}
+  - component: {fileID: 8870352952654910516}
   m_Layer: 0
   m_Name: Normal
   m_TagString: Player
@@ -350,6 +366,20 @@ MonoBehaviour:
   keyHolder: {fileID: 135173287623449543}
   floatAmplitude: 0.5
   floatFrequency: 1
+  inputHandler: {fileID: 0}
+--- !u!114 &8870352952654910516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4894719477080836052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf43d0137538d47c98979774a035f65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSwordPrefab: {fileID: 5986077319431927004, guid: 9f43259bbb562475a9afd30d5df0884e, type: 3}
 --- !u!1 &9146801787627551274
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,6 +591,10 @@ MonoBehaviour:
   groundTag: Ground
   normalPlayer: {fileID: 4396505758310250328}
   mainCamera: {fileID: 0}
+  raycastDistance: 20
+  shadowLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &1025259503246523409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,3 +610,4 @@ MonoBehaviour:
   keyHolder: {fileID: 651815961391626413}
   floatAmplitude: 0.5
   floatFrequency: 1
+  inputHandler: {fileID: 0}
