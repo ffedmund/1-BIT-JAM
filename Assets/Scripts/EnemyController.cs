@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -14,11 +15,13 @@ public class EnemyController : MonoBehaviour
     private bool movingRight = true; // Determines the direction the enemy is moving
 
     private Vector3 startingPosition;
+    private Collider2D m_collider2D;
 
     void Start()
     {
         // Store the starting position
         startingPosition = transform.position;
+        m_collider2D = GetComponent<Collider2D>();
     }
 
     void Update()
@@ -125,6 +128,14 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.CompareTag("Player") && other.transform.parent.TryGetComponent(out PlayerStats playerStats))
         {
             playerStats.Hurt();
+            StartCoroutine(DisableCollider(1));
         }
+    }
+
+    IEnumerator DisableCollider(float time)
+    {
+        m_collider2D.enabled = false;
+        yield return new WaitForSeconds(time);
+        m_collider2D.enabled = true;
     }
 }
