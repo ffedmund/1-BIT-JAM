@@ -11,13 +11,11 @@ public class PlayerController : MonoBehaviour
     public InputHandler inputHandler;
 
     private GameObject collectedKey;
-    private PlayerStats playerStats;
     private Vector3 keyInitialLocalPosition;
     private float floatTimer;
 
     private void Start() {
         inputHandler = transform.parent.GetComponent<InputHandler>();
-        playerStats = transform.parent.GetComponent<PlayerStats>();
     }
 
     private void Update()

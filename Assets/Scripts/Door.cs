@@ -38,7 +38,7 @@ public class Door : MonoBehaviour
             player.UseKey();
             isOpened = true;
         }
-        if(isOpened)
+        if(isOpened && player)
         {
             player.inputHandler.InteractHandler += GetIn;
         }

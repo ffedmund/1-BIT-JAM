@@ -71,4 +71,19 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
+
+    public void PlayerDeadHandler(PlayerStats player)
+    {
+        RespawnPlayer(player);
+    }
+
+    void RespawnPlayer(PlayerStats player)
+    {
+        GameObject respawnPoint = GameObject.FindWithTag("Respawn");
+        PlayerState playerState = player.GetComponent<PlayerState>();
+        GameObject normalPlayer = playerState.normalPlayer;
+
+        normalPlayer.transform.position = respawnPoint.transform.position;
+        player.Respawn();
+    }
 }

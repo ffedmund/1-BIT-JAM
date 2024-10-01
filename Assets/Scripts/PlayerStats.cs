@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour {
     public event Action<int> OnHurt;
+    public event Action OnSpawn;
+    public bool dead{get; private set;}
     public int maxHp = 3;
     public int curHp = 0;
 
@@ -13,7 +15,29 @@ public class PlayerStats : MonoBehaviour {
 
     public void Hurt()
     {
-        curHp--;
+        if(!dead)
+        {
+            curHp--;
+            OnHurt?.Invoke(curHp);
+            if(curHp <= 0)
+            {
+                Dead();
+            }
+        }
+    }
+
+    public void Dead()
+    {
+        curHp = 0;
         OnHurt?.Invoke(curHp);
+        dead = true;
+        GameManager.Singleton.PlayerDeadHandler(this);
+    }
+
+    public void Respawn()
+    {
+        curHp = maxHp;
+        OnSpawn?.Invoke();
+        dead = false;
     }
 }

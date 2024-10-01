@@ -42,6 +42,7 @@ public class Sword : MonoBehaviour
             if(other.TryGetComponent(out EnemyController enemy))
             {
                 enemy.TakeDamage(damage);
+                gameObject.SetActive(false);
             }
         }
     }

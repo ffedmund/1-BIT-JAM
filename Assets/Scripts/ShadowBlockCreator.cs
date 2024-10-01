@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Rendering.Universal;
-using System.Collections.Generic; // Add this for Light2D
+using System.Collections.Generic;
 
 public class ShadowBlockCreator : MonoBehaviour
 {
@@ -11,6 +11,11 @@ public class ShadowBlockCreator : MonoBehaviour
     public Transform player;             // Reference to the player
     public LayerMask layerMask;          // Layer mask to filter raycast hits
     public Camera mainCamera;            // Reference to the main camera
+
+    // New variables for customizable light range
+    public bool useCustomLightRange = false;     // Boolean to control which light range to use
+    public float customLightOuterRadius = 5f;    // Custom outer radius
+    public float customLightInnerRadius = 3f;    // Custom inner radius
 
     private Light2D light2D;
     private float lightOuterRadius;       // The outer radius of the light
@@ -41,16 +46,18 @@ public class ShadowBlockCreator : MonoBehaviour
         // Update camera bounds for this frame
         cameraBounds = OrthographicBounds(mainCamera);
 
-        // Check if the light source is within the camera bounds (2D check, ignoring Z)
-        // and if the player is within the light's outer radius
-        Vector3 lightPos2D = new Vector3(lightSource.position.x, lightSource.position.y, 0);
+        // Determine which radii to use
+        float currentLightOuterRadius = useCustomLightRange ? customLightOuterRadius : lightOuterRadius;
+        float currentLightInnerRadius = useCustomLightRange ? customLightInnerRadius : lightInnerRadius;
+
+        // Check if the player is within the light's outer radius
         Vector2 playerPos2D = new Vector2(player.position.x, player.position.y);
         Vector2 lightSourcePos2D = new Vector2(lightSource.position.x, lightSource.position.y);
         float distanceToPlayer = Vector2.Distance(playerPos2D, lightSourcePos2D);
 
-        if (distanceToPlayer > lightOuterRadius)
+        if (distanceToPlayer > currentLightOuterRadius)
         {
-            // Either light source is out of camera view or player is out of light's outer radius, clear shadows and exit
+            // Player is out of light's outer radius, clear shadows and exit
             ClearShadows();
             return;
         }
@@ -72,7 +79,8 @@ public class ShadowBlockCreator : MonoBehaviour
                 Vector3 worldPos = tilemap.CellToWorld(tilePos) + tilemap.tileAnchor;
                 Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
                 float distanceToTile = Vector2.Distance(lightSourcePos2D, worldPos2D);
-                if (tilePos == playerTilePos || distanceToTile <= lightInnerRadius)
+
+                if (tilePos == playerTilePos || distanceToTile <= currentLightInnerRadius)
                 {
                     if (tilemap.GetTile(tilePos) != null)
                     {
@@ -119,9 +127,12 @@ public class ShadowBlockCreator : MonoBehaviour
 
     private void SweepLightRadius()
     {
+        // Determine which inner radius to use
+        float currentLightInnerRadius = useCustomLightRange ? customLightInnerRadius : lightInnerRadius;
+
         Vector2 lightSourcePos2D = new Vector2(lightSource.position.x, lightSource.position.y);
         Vector3Int lightCellPos = tilemap.WorldToCell(lightSourcePos2D);
-        int radius = Mathf.CeilToInt(lightInnerRadius / tilemap.cellSize.x);
+        int radius = Mathf.CeilToInt(currentLightInnerRadius / tilemap.cellSize.x);
 
         for (int x = -radius; x <= radius; x++)
         {
@@ -131,7 +142,7 @@ public class ShadowBlockCreator : MonoBehaviour
                 Vector3 worldPos = tilemap.CellToWorld(tilePos) + tilemap.tileAnchor;
                 Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
                 float distanceToTile = Vector2.Distance(lightSourcePos2D, worldPos2D);
-                if (distanceToTile < lightInnerRadius && tilemap.GetTile(tilePos) != null)
+                if (distanceToTile < currentLightInnerRadius && tilemap.GetTile(tilePos) != null)
                 {
                     tilemap.SetTile(tilePos, null);
                 }
@@ -141,11 +152,11 @@ public class ShadowBlockCreator : MonoBehaviour
 
     private void ClearShadowInFrontOfPlayer()
     {
-        Vector2 playerVelocity = playerMovement.GetMovement();
+        Vector2 playerVelocity = playerMovement?.GetMovement() ?? Vector2.zero;
         if (playerVelocity.sqrMagnitude > 0.01f) // A small threshold to ensure the player is moving
         {
             Vector2 moveDirection = playerVelocity.normalized;
-            moveDirection = moveDirection.y < 0? new Vector2(moveDirection.x, 0): moveDirection;
+            moveDirection = moveDirection.y < 0 ? new Vector2(moveDirection.x, 0) : moveDirection;
             Vector2 playerPos = player.position;
             Vector2 frontPos = playerPos + moveDirection * tilemap.cellSize.x; // Check one tile ahead
 
@@ -157,7 +168,6 @@ public class ShadowBlockCreator : MonoBehaviour
             }
         }
     }
-
 
     // Method to get the orthographic bounds of the camera view
     private Bounds OrthographicBounds(Camera camera)
@@ -188,14 +198,9 @@ public class ShadowBlockCreator : MonoBehaviour
     private Vector3Int GetRoundedPlayerTilePosition()
     {
         Vector3 playerPosition = player.position;
-        Vector3Int playerTilePos;
 
-        playerTilePos = new Vector3Int(
-            Mathf.FloorToInt(playerPosition.x),
-            Mathf.FloorToInt(playerPosition.y),
-            0);
+        Vector3Int playerTilePos = tilemap.WorldToCell(playerPosition);
 
-        // Convert world position to tile position
-        return tilemap.WorldToCell(playerTilePos);
+        return playerTilePos;
     }
 }

@@ -34,14 +34,36 @@ public class PlayerState : MonoBehaviour
     {
         if (currentState == PlayerStates.Normal)
         {
-            // Switching to shadow state
-            currentState = PlayerStates.Shadow;
-            currentMovement.enabled = false;
-            normalPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-            shadowPlayer.transform.position = normalPlayer.transform.position;
-            shadowPlayer.SetActive(true);
-            currentMovement = shadowPlayer.GetComponent<PlayerMovement>();
-            followingCamera.Follow = shadowPlayer.transform;
+            // Raycast from the shadow player's position downwards
+            Vector2 rayOrigin = normalPlayer.transform.position + new Vector3(0,3);
+            Vector2 rayDirection = Vector2.down; // Cast downwards
+
+            float rayDistance = 5f; // Adjust this value based on how far down you want to check
+            int shadowBlockLayer = 1 << 6; // Layer 6 for "shadow block"
+
+            // Perform the raycast
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayDirection, rayDistance, shadowBlockLayer);
+
+            // Debugging the ray (optional)
+            Debug.DrawRay(rayOrigin, rayDirection * rayDistance, Color.green, 2f);
+
+            // Check if the ray hit a collider on the shadow block layer
+            if (hit.collider != null)
+            {
+                // Raycast hit something on the shadow block layer, allow switching to shadow state
+                currentState = PlayerStates.Shadow;
+                currentMovement.enabled = false;
+                normalPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+                shadowPlayer.transform.position = hit.point + new Vector2(0,0.5f);
+                shadowPlayer.SetActive(true);
+                currentMovement = shadowPlayer.GetComponent<PlayerMovement>();
+                followingCamera.Follow = shadowPlayer.transform;
+            }
+            else
+            {
+                // Raycast did not hit a shadow block, prevent the state change
+                Debug.Log("Shadow player is not standing on a shadow block!");
+            }
         }
         else
         {

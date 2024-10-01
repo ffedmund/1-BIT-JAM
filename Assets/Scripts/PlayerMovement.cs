@@ -6,36 +6,34 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;          // Speed at which the player moves
     public float jumpForce = 10f;         // Force applied when the player jumps
     public Transform groundCheck;         // A position marking where to check if the player is grounded
-    public string groundTag = "Ground";   // Tag to identify ground objects
+    public LayerMask groundLayer;   // Tag to identify ground objects
 
     protected Rigidbody2D rb;
     protected Vector2 movement;
+    protected InputHandler inputHandler;
     protected bool isGrounded;
     private float groundCheckRadius = 0.2f; // Radius of the ground check
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        inputHandler = transform.parent.GetComponent<InputHandler>();
     }
 
     protected virtual void Update()
     {
         // Get horizontal input from the player
-        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.x = inputHandler.inputMovement.x;
         
         // Move the player horizontally
         movement = new Vector2(movement.x * moveSpeed, rb.velocity.y);
 
         // Check if the player is grounded
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, groundCheckRadius, groundLayer);
         isGrounded = false;
-        foreach (Collider2D collider in colliders)
+        if(colliders.Length > 0)
         {
-            if (collider.CompareTag(groundTag))
-            {
-                isGrounded = true;
-                break;
-            }
+            isGrounded = true;
         }
 
         // Check if the player pressed the jump button and is grounded

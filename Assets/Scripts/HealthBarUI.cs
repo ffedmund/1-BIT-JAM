@@ -13,7 +13,8 @@ public class HealthBarUI : MonoBehaviour
         PlayerStats player = FindAnyObjectByType<PlayerStats>();
         maxHp = player.maxHp;
         player.OnHurt += UpdateHp;
-        UpdateHp(player.curHp);
+        player.OnSpawn += SetMaxHp;
+        SetMaxHp();
     }
 
     void UpdateHp(int newHp)
@@ -25,11 +26,22 @@ public class HealthBarUI : MonoBehaviour
             {
                 Instantiate(heartPrefab,transform);
             }
-            else
+            else if(transform.childCount > 0)
             {
                 Destroy(transform.GetChild(0).gameObject);
             }
         } 
     }
 
+    public void SetMaxHp()
+    {
+        foreach(Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+        for(int i = 0; i < maxHp; i++)
+        {
+            Instantiate(heartPrefab,transform);
+        } 
+    }
 }

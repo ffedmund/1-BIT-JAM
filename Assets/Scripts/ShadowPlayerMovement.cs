@@ -13,6 +13,7 @@ public class ShadowPlayerMovement : PlayerMovement
     {
         playerState = transform.parent.GetComponent<PlayerState>();
         rb = GetComponent<Rigidbody2D>();
+        inputHandler = transform.parent.GetComponent<InputHandler>();
     }
 
     protected override void Update()

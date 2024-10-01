@@ -167,7 +167,7 @@ MonoBehaviour:
   rightRaycastPoint: {fileID: 544520412826040566}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1024
   raycastDistance: 0.1
   movementBound: 2
   hp: 1
