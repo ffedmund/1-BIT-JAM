@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6560009107125924175}
   - component: {fileID: 5843246697956204045}
   - component: {fileID: 7133636644273295145}
+  - component: {fileID: 1130460392803600207}
   m_Layer: 9
   m_Name: Door
   m_TagString: Untagged
@@ -101,6 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   closedDoorSprite: {fileID: -1654765932, guid: dfa60de29d0011840be5184cd637d6dd, type: 3}
   openDoorSprite: {fileID: 184709640, guid: dfa60de29d0011840be5184cd637d6dd, type: 3}
+  doorAction: 0
+  teleportPosition: {x: 0, y: 0}
 --- !u!114 &5843246697956204045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,3 +199,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1130460392803600207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6183465747137447458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5bb94ff4d9d842e282e9f9b110df177, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactText: Press E

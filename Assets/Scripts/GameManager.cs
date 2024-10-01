@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         string sceneName = "Floor" + levelIndex;
         if (DoesSceneExist(sceneName))
         {
-            SceneManager.LoadScene(sceneName);
+            SceneTransitionManager.Singleton.LoadScene(sceneName);
         }
         else
         {
