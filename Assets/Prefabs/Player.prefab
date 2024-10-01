@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerState: {fileID: 0}
+  playerStats: {fileID: 0}
   switchCooldownDuration: 0.5
 --- !u!114 &6069046907197191444
 MonoBehaviour:
@@ -308,7 +309,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 0.35, y: 0.9}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 0.02
 --- !u!50 &1065394537836937905
 Rigidbody2D:
   serializedVersion: 4
@@ -548,7 +549,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 0.35, y: 0.9}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 0.02
 --- !u!50 &4694768247237338133
 Rigidbody2D:
   serializedVersion: 4

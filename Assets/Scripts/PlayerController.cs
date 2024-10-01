@@ -41,6 +41,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D other) {
+        if (other.gameObject.CompareTag("Pushable") && other.gameObject.TryGetComponent(out PushableBlock pushableBlock))
+        {
+            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x,0);
+            Collider2D hit = Physics2D.OverlapPoint(targetPos);
+            if(hit)
+                pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x,0));
+        }
+    }
+
     public bool HasKey()
     {
         return collectedKey != null;
