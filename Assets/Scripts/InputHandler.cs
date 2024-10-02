@@ -12,6 +12,8 @@ public class InputHandler : MonoBehaviour
     // Cooldown variables
     public float switchCooldownDuration = 0.5f; // Cooldown duration in seconds
     private float switchCooldownTimer = 0f;     // Timer to track cooldown
+    public float attackCooldownDuration = 1f; // Cooldown duration in seconds
+    private float attackCooldownTimer = 0f;     // Timer to track cooldown
 
     void Start()
     {
@@ -30,6 +32,11 @@ public class InputHandler : MonoBehaviour
         if (switchCooldownTimer > 0f)
         {
             switchCooldownTimer -= Time.deltaTime;
+        }
+        // Decrease the cooldown timer if it's above zero
+        if (attackCooldownTimer > 0f)
+        {
+            attackCooldownTimer -= Time.deltaTime;
         }
 
         // Gather input
@@ -53,12 +60,17 @@ public class InputHandler : MonoBehaviour
         }
 
         // Attack input
-        if (Input.GetKeyDown(KeyCode.F)
+        if (Input.GetKey(KeyCode.F)
             && playerState.currentState == PlayerStates.Normal
             && playerState.normalPlayer.TryGetComponent(out SwordAttacker attacker))
         {
-            float directionX = inputMovement.x < 0 ? -1 : 1;
-            attacker.Attack(new Vector2(directionX, inputMovement.y), playerState.normalPlayer);
+            if(attackCooldownTimer <= 0f)
+            {
+                float directionX = inputMovement.x < 0 ? -1 : 1;
+                attacker.Attack(new Vector2(directionX, inputMovement.y), playerState.normalPlayer);
+                attackCooldownTimer = attackCooldownDuration; // Reset the cooldown timer
+            }
+            inputMovement = Vector2.zero;
         }
     }
 }

@@ -26,18 +26,17 @@ public class PlayerStats : MonoBehaviour {
         }
     }
 
-    public void Dead()
+    public void FallOff()
+    {
+        GameManager.Singleton.RespawnPlayer(this);
+        Hurt();
+    }
+
+    void Dead()
     {
         curHp = 0;
         OnHurt?.Invoke(curHp);
         dead = true;
-        GameManager.Singleton.PlayerDeadHandler(this);
-    }
-
-    public void Respawn()
-    {
-        curHp = maxHp;
-        OnSpawn?.Invoke();
-        dead = false;
+        GameManager.Singleton.GameOver();
     }
 }

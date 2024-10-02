@@ -10,7 +10,7 @@ public class MenuManager : MonoBehaviour
     {
         if(Input.anyKeyDown && !gameStart)
         {
-            SceneTransitionManager.Singleton.LoadScene("Floor1");
+            GameManager.Singleton.NextLevel();
             gameStart = true;
         } 
     }

@@ -36,7 +36,6 @@ public class Sword : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log("" + other.gameObject.name);
         if(other.gameObject != attacker)
         {
             if(other.TryGetComponent(out EnemyController enemy))

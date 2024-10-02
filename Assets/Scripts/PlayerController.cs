@@ -13,9 +13,11 @@ public class PlayerController : MonoBehaviour
     private GameObject collectedKey;
     private Vector3 keyInitialLocalPosition;
     private float floatTimer;
+    private bool isShadowPlayer;
 
     private void Start() {
         inputHandler = transform.parent.GetComponent<InputHandler>();
+        isShadowPlayer = transform.TryGetComponent(out ShadowPlayerMovement component);
     }
 
     private void Update()
@@ -26,6 +28,14 @@ public class PlayerController : MonoBehaviour
             floatTimer += Time.deltaTime * floatFrequency;
             float newY = Mathf.Sin(floatTimer) * floatAmplitude;
             collectedKey.transform.localPosition = keyInitialLocalPosition + new Vector3(0, newY, 0);
+        }
+
+        if(isShadowPlayer)
+        {
+            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x,0);
+            Collider2D hit = Physics2D.OverlapPoint(targetPos);
+            if(hit?.TryGetComponent(out PushableBlock pushableBlock) ?? false)
+                pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x,0));
         }
     }
 

@@ -162,15 +162,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6360c7463e7f1465a96e7bcc1f84b86c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
+  movementDirection: 0
+  moveSpeed: 1.5
+  extraSpeedMultiplier: {x: 1, y: 1}
   leftRaycastPoint: {fileID: 5977841657358402892}
   rightRaycastPoint: {fileID: 544520412826040566}
+  topRaycastPoint: {fileID: 0}
+  bottomRaycastPoint: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 1024
   raycastDistance: 0.1
   movementBound: 2
-  hp: 1
+  hp: 2
+  detectionRadius: 3
+  enabledAllTraceMovement: 0
 --- !u!61 &4949620951974111482
 BoxCollider2D:
   m_ObjectHideFlags: 0

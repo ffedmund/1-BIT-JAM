@@ -184,7 +184,7 @@ public class ShadowBlockCreator : MonoBehaviour
     {
         foreach (Vector3Int tilePos in shadowTiles)
         {
-            if (tilemap.GetTile(tilePos) != null)
+            if (tilemap?.GetTile(tilePos) != null)
             {
                 tilemap.SetTile(tilePos, null);
             }
@@ -202,5 +202,9 @@ public class ShadowBlockCreator : MonoBehaviour
         Vector3Int playerTilePos = tilemap.WorldToCell(playerPosition);
 
         return playerTilePos;
+    }
+
+    private void OnDisable() {
+        ClearShadows();
     }
 }

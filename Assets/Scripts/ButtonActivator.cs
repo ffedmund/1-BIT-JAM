@@ -8,15 +8,18 @@ public class ButtonActivator : MonoBehaviour
     public float activationDelay = 0.5f; // Delay between each block activation
     public Sprite normalSprite; // The normal sprite of the button
     public Sprite activeSprite; // The active sprite of the button
+    public bool switchMode;
 
     private Coroutine activationCoroutine;
     private SpriteRenderer spriteRenderer;
+    private bool isActive;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         // Set the initial sprite to the normal sprite
         spriteRenderer.sprite = normalSprite;
+        isActive = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -28,6 +31,7 @@ public class ButtonActivator : MonoBehaviour
             // Start the block activation coroutine when the player enters the trigger collider
             if (activationCoroutine == null)
             {
+                isActive = switchMode? !isActive : true;
                 activationCoroutine = StartCoroutine(ActivateBlocksOneByOne());
             }
         }
@@ -46,8 +50,9 @@ public class ButtonActivator : MonoBehaviour
     {
         foreach (GameObject block in hiddenPathBlocks)
         {
-            block.SetActive(true);
+            block.SetActive(isActive);
             yield return new WaitForSeconds(activationDelay);
         }
+        activationCoroutine = null;
     }
 }

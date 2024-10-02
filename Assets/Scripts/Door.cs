@@ -33,7 +33,7 @@ public class Door : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
-        if (player != null && player.HasKey())
+        if (player != null && player.HasKey() && !isOpened)
         {
             // Change the sprite to the open door sprite
             spriteRenderer.sprite = openDoorSprite;
@@ -63,6 +63,7 @@ public class Door : MonoBehaviour
         {
             case DoorAction.NextLevel:
                 GameManager.Singleton.NextLevel();
+                player.GetComponent<PlayerController>().inputHandler.InteractHandler -= GetIn;
             break;
             case DoorAction.Teleport:
                 player.position = new Vector3(teleportPosition.x,teleportPosition.y);
