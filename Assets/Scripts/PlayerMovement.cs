@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;   // Tag to identify ground objects
 
     protected Rigidbody2D rb;
+    protected Animator animator;
+    protected SpriteRenderer spriteRenderer;
     protected Vector2 movement;
     protected InputHandler inputHandler;
     protected bool isGrounded;
@@ -17,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         inputHandler = transform.parent.GetComponent<InputHandler>();
     }
 
@@ -34,6 +38,12 @@ public class PlayerMovement : MonoBehaviour
         if(colliders.Length > 0)
         {
             isGrounded = true;
+        }
+
+        if(animator != null)
+        {
+            animator.SetFloat("Speed", Mathf.Abs(movement.x));
+            spriteRenderer.flipX = movement.x < 0;
         }
 
         // Check if the player pressed the jump button and is grounded
@@ -61,6 +71,11 @@ public class PlayerMovement : MonoBehaviour
         
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+    }
+
+    private void OnDisable() {
+        if(animator != null)
+            animator.SetFloat("Speed", 0);
     }
 
     public Vector2 GetMovement() => movement;
