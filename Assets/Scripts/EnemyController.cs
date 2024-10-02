@@ -195,7 +195,6 @@ public class EnemyController : MonoBehaviour
                 isTracingPlayer = false;
                 return;
             }
-            Debug.Log("Tracing player, on ground:" + CheckForGround());
             // Move towards the player
             direction = new Vector2(direction.x, enabledAllTraceMovement? direction.y:0);
             transform.Translate(direction * moveSpeed * Time.deltaTime);

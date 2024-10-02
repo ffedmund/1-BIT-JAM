@@ -15,7 +15,7 @@ public class InteractNotice : MonoBehaviour {
         if(other.CompareTag("Player"))
         {
             HUDController controller = FindAnyObjectByType<HUDController>();
-            if(controller?.interactText?.GetParsedText().Equals(interactText) ?? false)
+            if((controller?.interactText?.GetParsedText().Equals(interactText) ?? false) || (controller?.interactText?.text.Equals(interactText) ?? false))
                 controller.SetInteractText("");
         }
     }

@@ -15,15 +15,18 @@ public class InputHandler : MonoBehaviour
     public float attackCooldownDuration = 1f; // Cooldown duration in seconds
     private float attackCooldownTimer = 0f;     // Timer to track cooldown
 
+    public bool inputLock;
+
     void Start()
     {
         playerState = GetComponent<PlayerState>();
         playerStats = GetComponent<PlayerStats>();
+        inputLock = false;
     }
 
     void Update()
     {
-        if(playerStats.dead)
+        if(playerStats.dead || inputLock)
         {
             inputMovement = Vector2.zero;
             return;
@@ -44,10 +47,10 @@ public class InputHandler : MonoBehaviour
         jumpInput = Input.GetButtonDown("Jump");
 
         // Check for state switch input with cooldown
-        if (Input.GetKeyDown(KeyCode.Tab) && switchCooldownTimer <= 0f)
+        if (GameManager.Singleton.unlockShadowPower && Input.GetKeyDown(KeyCode.Tab) && switchCooldownTimer <= 0f)
         {
-            playerState.SwitchState();
-            switchCooldownTimer = switchCooldownDuration; // Reset the cooldown timer
+            if(playerState.SwitchState())
+                switchCooldownTimer = switchCooldownDuration; // Reset the cooldown timer
         }
 
         // Interact input

@@ -9,11 +9,24 @@ public class ShadowPlayerMovement : PlayerMovement
 
     private PlayerState playerState;
 
+    private void Awake() {
+        animator = GetComponent<Animator>();
+    }
+
     void Start()
     {
         playerState = transform.parent.GetComponent<PlayerState>();
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         inputHandler = transform.parent.GetComponent<InputHandler>();
+    }
+
+    private void OnEnable() {
+        animator.CrossFade("shadow_spawn",0);
+    }
+
+    private void OnDisable() {
+        inputHandler.inputLock = false;
     }
 
     protected override void Update()

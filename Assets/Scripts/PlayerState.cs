@@ -30,7 +30,7 @@ public class PlayerState : MonoBehaviour
     }
 
     // Method to switch between normal and shadow state
-    public void SwitchState()
+    public bool SwitchState()
     {
         if (currentState == PlayerStates.Normal)
         {
@@ -58,6 +58,7 @@ public class PlayerState : MonoBehaviour
                 shadowPlayer.SetActive(true);
                 currentMovement = shadowPlayer.GetComponent<PlayerMovement>();
                 followingCamera.Follow = shadowPlayer.transform;
+                return true;
             }
             else
             {
@@ -75,6 +76,9 @@ public class PlayerState : MonoBehaviour
             currentMovement.enabled = true;
             normalPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             followingCamera.Follow = normalPlayer.transform;
+            return true;
         }
+
+        return false;
     }
 }

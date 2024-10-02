@@ -26,12 +26,12 @@ public class PressStartAnimation : MonoBehaviour
 
         if (useFadeAnimation)
         {
-            StartFadeAnimation();
+            Invoke("StartFadeAnimation",0.1f);
         }
 
         if (useScaleAnimation)
         {
-            StartScaleAnimation();
+            Invoke("StartScaleAnimation",0.1f);
         }
     }
 

@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement; // Include necessary namespace for scene mana
 public class GameManager : MonoBehaviour
 {
     public static GameManager Singleton;
-
+    // public bool unlockShadowPower{get; private set;}
+    public bool unlockShadowPower;
     private int levelIndex = 0; // Starting with the first level in the list
 
     private void Awake()
@@ -85,4 +86,6 @@ public class GameManager : MonoBehaviour
 
         normalPlayer.transform.position = respawnPoint.transform.position;
     }
+
+    public void UnlockShadowPower() => unlockShadowPower = true;
 }

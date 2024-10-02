@@ -62,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        movement = rb.velocity;
     }
 
     private void OnDrawGizmosSelected()
