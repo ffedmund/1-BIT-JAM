@@ -26,7 +26,8 @@ public class ShadowPlayerMovement : PlayerMovement
     }
 
     private void OnDisable() {
-        inputHandler.inputLock = false;
+        if(inputHandler != null)
+            inputHandler.inputLock = false;
     }
 
     protected override void Update()
