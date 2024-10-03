@@ -10,7 +10,7 @@ public class InputHandler : MonoBehaviour
     public event Action<Transform> InteractHandler;
 
     // Cooldown variables
-    public float switchCooldownDuration = 0.5f; // Cooldown duration in seconds
+    public float switchCooldownDuration = 0.4f; // Cooldown duration in seconds
     private float switchCooldownTimer = 0f;     // Timer to track cooldown
     public float attackCooldownDuration = 1f; // Cooldown duration in seconds
     private float attackCooldownTimer = 0f;     // Timer to track cooldown
@@ -51,6 +51,8 @@ public class InputHandler : MonoBehaviour
         {
             if(playerState.SwitchState())
                 switchCooldownTimer = switchCooldownDuration; // Reset the cooldown timer
+            else
+                FindAnyObjectByType<HUDController>().SetInteractText("No Shadow!",1);
         }
 
         // Interact input

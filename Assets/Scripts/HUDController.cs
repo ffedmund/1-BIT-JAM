@@ -19,6 +19,12 @@ public class HUDController : MonoBehaviour
         interactText.SetText(text);
     }
 
+    public void SetInteractText(string text, float disapearTime)
+    {
+        interactText.SetText(text);
+        StartCoroutine(ClearTextTimer(interactText, text, disapearTime));
+    }
+
     public void SetDialogueText(string text)
     {
         StopAllCoroutines();
@@ -61,6 +67,15 @@ public class HUDController : MonoBehaviour
         {
             dialogueText.text += letter;  // Add each letter one by one
             yield return new WaitForSeconds(typingSpeed);  // Wait before showing the next letter
+        }
+    }
+
+    IEnumerator ClearTextTimer(TextMeshProUGUI textMesh, string text, float time)
+    {
+        yield return new WaitForSeconds(time);
+        if(textMesh.GetParsedText().Equals(text) || textMesh.text.Equals(text))
+        {
+            textMesh.SetText("");
         }
     }
 }

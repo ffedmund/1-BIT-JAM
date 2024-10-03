@@ -97,8 +97,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerState: {fileID: 0}
   playerStats: {fileID: 0}
-  switchCooldownDuration: 0.5
-  attackCooldownDuration: 1
+  switchCooldownDuration: 0.4
+  attackCooldownDuration: 0.8
   inputLock: 0
 --- !u!114 &6069046907197191444
 MonoBehaviour:
