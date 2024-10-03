@@ -99,6 +99,7 @@ MonoBehaviour:
   playerStats: {fileID: 0}
   switchCooldownDuration: 0.5
   attackCooldownDuration: 1
+  inputLock: 0
 --- !u!114 &6069046907197191444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,7 +603,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2059616797
   m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -438346350, guid: 9abfe18af6969c04bb7c3660055ee3ca, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

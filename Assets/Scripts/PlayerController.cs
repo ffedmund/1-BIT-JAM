@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
         if(isShadowPlayer)
         {
-            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x,0);
+            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x,0) * 0.25f;
             Collider2D hit = Physics2D.OverlapPoint(targetPos);
             if(hit?.TryGetComponent(out PushableBlock pushableBlock) ?? false)
                 pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x,0));

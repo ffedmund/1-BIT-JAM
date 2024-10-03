@@ -53,7 +53,9 @@ public class PlayerState : MonoBehaviour
                 // Raycast hit something on the shadow block layer, allow switching to shadow state
                 currentState = PlayerStates.Shadow;
                 currentMovement.enabled = false;
-                normalPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+                Rigidbody2D playerRigidbody2D = normalPlayer.GetComponent<Rigidbody2D>();
+                playerRigidbody2D.velocity = Vector2.zero;
+                playerRigidbody2D.bodyType = RigidbodyType2D.Kinematic;
                 shadowPlayer.transform.position = hit.point + new Vector2(0,0.5f);
                 shadowPlayer.SetActive(true);
                 currentMovement = shadowPlayer.GetComponent<PlayerMovement>();

@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementDirection: 1
-  moveSpeed: 0.75
+  moveSpeed: 1
   extraSpeedMultiplier: {x: 4, y: 1}
   leftRaycastPoint: {fileID: 5039904695566540283}
   rightRaycastPoint: {fileID: 1579926979843604148}
