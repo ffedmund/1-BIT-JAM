@@ -63,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         movement = rb.velocity;
+        AudioManager.Singleton?.PlaySFX("Jump");
     }
 
     private void OnDrawGizmosSelected()
@@ -80,4 +81,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public Vector2 GetMovement() => movement;
+
+    public void WalkSFX()
+    {
+        if(isGrounded)
+            AudioManager.Singleton?.PlaySFX("Walk" + Random.Range(1,3));
+    }
 }

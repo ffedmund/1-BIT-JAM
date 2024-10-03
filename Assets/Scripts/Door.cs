@@ -59,6 +59,7 @@ public class Door : MonoBehaviour
 
     private void GetIn(Transform player)
     {
+        AudioManager.Singleton?.PlaySFX("DoorClose");
         switch (doorAction)
         {
             case DoorAction.NextLevel:

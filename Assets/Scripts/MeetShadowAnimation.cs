@@ -35,6 +35,7 @@ public class MeetShadowAnimation : MonoBehaviour {
         if(GameManager.Singleton.unlockShadowPower)
             return;
         inputHandler.inputLock = true;
+        AudioManager.Singleton?.PlayMusic("ShadowMeet", 1.5f);
         hudController.SetStoryMode(ShadowMeeting);
     }
 

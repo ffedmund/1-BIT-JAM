@@ -205,8 +205,10 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         hp -= damage;
+        AudioManager.Singleton?.PlaySFX("Hit");
         if (hp <= 0)
         {
+            AudioManager.Singleton?.PlaySFX("Dead");
             Destroy(gameObject);  // Destroy the enemy object
         }
     }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6462493251121347991}
   - component: {fileID: 8039043319976288719}
   - component: {fileID: 3404403211412930587}
+  - component: {fileID: 1988614323033384055}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -45,6 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80202c46efe74e5b9c6def474cda280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backgroundMusicManager: {fileID: 0}
+  unlockShadowPower: 0
 --- !u!114 &3404403211412930587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,3 +64,17 @@ MonoBehaviour:
   - prefab: {fileID: 5986077319431927004, guid: 9f43259bbb562475a9afd30d5df0884e, type: 3}
     initialSize: 3
   expandable: 1
+--- !u!114 &1988614323033384055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393457487614747823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7457faaf5ea0342089b813757055eea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minDelayBetweenTracks: 30
+  maxDelayBetweenTracks: 120

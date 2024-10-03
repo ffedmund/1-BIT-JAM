@@ -17,6 +17,8 @@ public class InputHandler : MonoBehaviour
 
     public bool inputLock;
 
+    private GameObject settingUI;
+
     void Start()
     {
         playerState = GetComponent<PlayerState>();
@@ -76,6 +78,13 @@ public class InputHandler : MonoBehaviour
                 attackCooldownTimer = attackCooldownDuration; // Reset the cooldown timer
             }
             inputMovement = Vector2.zero;
+        }
+
+        if(Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.O))
+        {
+            if(settingUI == null)
+                settingUI = FindAnyObjectByType<SettingUIController>(FindObjectsInactive.Include).gameObject;
+            settingUI.SetActive(!settingUI.activeSelf);
         }
     }
 }

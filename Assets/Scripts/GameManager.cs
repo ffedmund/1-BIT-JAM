@@ -5,6 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Singleton;
     // public bool unlockShadowPower{get; private set;}
+    public BackgroundMusicManager backgroundMusicManager;
     public bool unlockShadowPower;
     private int levelIndex = 0; // Starting with the first level in the list
 
@@ -14,6 +15,7 @@ public class GameManager : MonoBehaviour
         {
             Singleton = this;
             DontDestroyOnLoad(gameObject);
+            backgroundMusicManager = GetComponent<BackgroundMusicManager>();
         }
         else
         {
@@ -25,6 +27,10 @@ public class GameManager : MonoBehaviour
     {
         levelIndex++;
         LoadCurrentLevel();
+        if(levelIndex == 1)
+        {
+            backgroundMusicManager.StartMusic();
+        }
     }
 
     public void LoadLevelByIndex(int index)

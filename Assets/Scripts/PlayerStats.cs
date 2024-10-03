@@ -19,6 +19,7 @@ public class PlayerStats : MonoBehaviour {
         {
             curHp--;
             OnHurt?.Invoke(curHp);
+            AudioManager.Singleton?.PlaySFX("Hurt");
             if(curHp <= 0)
             {
                 Dead();

@@ -63,7 +63,7 @@ public class PushableBlock : MonoBehaviour
             // There is an obstacle in the way
             return false;
         }
-
+        AudioManager.Singleton?.PlaySFX("BoxMove");
         // Start moving the block
         StartCoroutine(MoveBlock(newPos));
         return true;

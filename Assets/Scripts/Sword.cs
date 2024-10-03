@@ -28,7 +28,7 @@ public class Sword : MonoBehaviour
     {
         m_rigidbody2D.velocity = direction.normalized * speed;
         this.attacker = attacker;
-
+        AudioManager.Singleton?.PlaySFX("Attack");
     }
 
     private void OnDisable() {

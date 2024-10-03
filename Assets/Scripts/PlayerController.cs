@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour
     public void UseKey() {
         if (collectedKey != null)
         {
+            AudioManager.Singleton?.PlaySFX("Open");
             Destroy(collectedKey);
         }
     }
