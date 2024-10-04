@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingUIController : MonoBehaviour
 {
     public Button restartButton;
+    public Button attackKeyButton;
+    public TextMeshProUGUI attackKeyText;
     public Slider musicSlider;
     public Slider sfxSlider;
 
@@ -14,9 +17,25 @@ public class SettingUIController : MonoBehaviour
     void Start()
     {
         restartButton.onClick.AddListener(()=>GameManager.Singleton.RestartLevel());
+        attackKeyButton.onClick.AddListener(()=>SwapAttackKey());
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         LoadVolumeSettings();
+        LoadAttackKey();
+    }
+
+    private void LoadAttackKey()
+    {
+        string attackKey = PlayerPrefs.GetString("AttackKey", "J");
+        attackKeyText.SetText(attackKey);
+    }
+
+    private void SwapAttackKey()
+    {
+        string attackKey = PlayerPrefs.GetString("AttackKey", "J");
+        PlayerPrefs.SetString("AttackKey", attackKey.Equals("J")?"F":"J");
+        PlayerPrefs.Save();
+        attackKeyText.SetText(attackKey.Equals("J")?"F":"J");
     }
 
     void OnEnable()

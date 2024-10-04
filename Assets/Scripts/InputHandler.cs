@@ -18,11 +18,13 @@ public class InputHandler : MonoBehaviour
     public bool inputLock;
 
     private GameObject settingUI;
+    private KeyCode attackKeyCode;
 
     void Start()
     {
         playerState = GetComponent<PlayerState>();
         playerStats = GetComponent<PlayerStats>();
+        attackKeyCode = PlayerPrefs.GetString("AttackKey","J").Equals("J")? KeyCode.J: KeyCode.F;
         inputLock = false;
     }
 
@@ -67,7 +69,7 @@ public class InputHandler : MonoBehaviour
         }
 
         // Attack input
-        if (Input.GetKey(KeyCode.F)
+        if ((Input.GetKey(attackKeyCode) || Input.GetMouseButtonDown(0))
             && playerState.currentState == PlayerStates.Normal
             && playerState.normalPlayer.TryGetComponent(out SwordAttacker attacker))
         {

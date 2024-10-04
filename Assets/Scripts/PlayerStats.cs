@@ -27,6 +27,15 @@ public class PlayerStats : MonoBehaviour {
         }
     }
 
+    public void Heal()
+    {
+        if(!dead && curHp < maxHp)
+        {
+            curHp++;
+            OnHurt?.Invoke(curHp);
+        }
+    }
+
     public void FallOff()
     {
         GameManager.Singleton.RespawnPlayer(this);
