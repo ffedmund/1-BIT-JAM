@@ -114,9 +114,6 @@ public class ShadowBlockCreator : MonoBehaviour
                 }
             }
         }
-
-        // Ensure no shadow tiles in front of the player's moving direction
-        ClearShadowInFrontOfPlayer();
     }
 
     void LateUpdate()
@@ -146,25 +143,6 @@ public class ShadowBlockCreator : MonoBehaviour
                 {
                     tilemap.SetTile(tilePos, null);
                 }
-            }
-        }
-    }
-
-    private void ClearShadowInFrontOfPlayer()
-    {
-        Vector2 playerVelocity = playerMovement?.GetMovement() ?? Vector2.zero;
-        if (playerVelocity.sqrMagnitude > 0.01f) // A small threshold to ensure the player is moving
-        {
-            Vector2 moveDirection = playerVelocity.normalized;
-            moveDirection = moveDirection.y < 0 ? new Vector2(moveDirection.x, 0) : moveDirection;
-            Vector2 playerPos = player.position;
-            Vector2 frontPos = playerPos + moveDirection * tilemap.cellSize.x; // Check one tile ahead
-
-            Vector3Int frontTilePos = tilemap.WorldToCell(frontPos);
-
-            if (tilemap.GetTile(frontTilePos) != null)
-            {
-                tilemap.SetTile(frontTilePos, null);
             }
         }
     }

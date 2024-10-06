@@ -83,7 +83,19 @@ public class PlayerController : MonoBehaviour
     // Methods to handle keys
     public bool HasKey() => collectedKey != null;
 
-    public void ReleaseKey() => collectedKey = null;
+    public void ReleaseKey(){
+        if(collectedKey != null)
+        {
+            collectedKey.transform.SetParent(null);
+            collectedKey = null;
+        }
+    }
 
-    public void UseKey() => Destroy(collectedKey);
+    public void UseKey() {
+        if (collectedKey != null)
+        {
+            AudioManager.Singleton?.PlaySFX("Open");
+            Destroy(collectedKey);
+        }
+    }
 }

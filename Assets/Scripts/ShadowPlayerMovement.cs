@@ -61,7 +61,6 @@ public class ShadowPlayerMovement : PlayerMovement
 
     private void ShadowMovementHandler()
     {
-        Debug.Log(movement);
         Vector2 newPosition = rb.position + movement * Time.fixedDeltaTime;
         bool canMove = IsNormalPlayerWithinCameraBounds() || IsMovingTowardsNormalPlayer(newPosition);
         rb.velocity = canMove? movement:new Vector2(0,rb.velocity.y);

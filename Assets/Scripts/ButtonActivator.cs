@@ -12,6 +12,7 @@ public class ButtonActivator : MonoBehaviour
     public Sprite activeSprite; // The active sprite of the button
     public bool holdMode;
     public bool freezeBlock;
+    public bool disableMode;
 
     private Coroutine activationCoroutine;
     private SpriteRenderer spriteRenderer;
@@ -35,6 +36,7 @@ public class ButtonActivator : MonoBehaviour
             spriteRenderer.sprite = activeSprite;
             Debug.Log("" + other.gameObject.name);
             onStayColliderSet.Add(other);
+            AudioManager.Singleton.PlaySFX("UIOpen");
             // Start the block activation coroutine when the player enters the trigger collider
             if(!isActive && activationCoroutine != null){
                 StopCoroutine(activationCoroutine);
@@ -79,7 +81,7 @@ public class ButtonActivator : MonoBehaviour
     {
         foreach (GameObject block in hiddenPathBlocks)
         {
-            block.SetActive(isActive);
+            block.SetActive(isActive ^ disableMode);
             yield return new WaitForSeconds(activationDelay);
         }
         activationCoroutine = null;
