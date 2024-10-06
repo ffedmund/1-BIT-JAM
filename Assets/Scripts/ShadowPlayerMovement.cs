@@ -51,6 +51,7 @@ public class ShadowPlayerMovement : PlayerMovement
             if(enemyController.movementDirection == EnemyController.MovementDirection.Vertical)
             {
                 rb.velocity = new Vector2(0, inputHandler.inputMovement.y != 0?  inputHandler.inputMovement.y:rb.velocity.y);
+                movement = new Vector2(0,rb.velocity.y);
             }
         }
     }

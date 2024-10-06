@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Key collection.
-        if (other.CompareTag("Key"))
+        if (other.CompareTag("Key") && !other.transform.root.CompareTag("Player"))
         {
             collectedKey = other.gameObject;
             collectedKey.transform.SetParent(transform);
