@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     protected Vector2 movement;
     protected InputHandler inputHandler;
     protected bool isGrounded;
-    private float groundCheckRadius = 0.2f; // Radius of the ground check
+    private float groundCheckRadius = 0.15f; // Radius of the ground check
 
     void Start()
     {
@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Check if the player pressed the jump button and is grounded
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (inputHandler.jumpInput && isGrounded)
         {
             Jump();
         }

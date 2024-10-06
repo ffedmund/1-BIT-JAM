@@ -70,13 +70,12 @@ public class InputHandler : MonoBehaviour
 
         // Attack input
         if ((Input.GetKey(attackKeyCode) || Input.GetMouseButtonDown(0))
-            && playerState.currentState == PlayerStates.Normal
-            && playerState.normalPlayer.TryGetComponent(out SwordAttacker attacker))
+            && (playerState.currentState == PlayerStates.Normal? playerState.normalPlayer:playerState.shadowPlayer).TryGetComponent(out Attacker attacker))
         {
             if(attackCooldownTimer <= 0f)
             {
                 float directionX = inputMovement.x < 0 ? -1 : 1;
-                attacker.Attack(new Vector2(directionX, inputMovement.y), playerState.normalPlayer);
+                attacker.Attack(new Vector2(directionX, inputMovement.y), playerState.currentState == PlayerStates.Normal? playerState.normalPlayer:playerState.shadowPlayer);
                 attackCooldownTimer = attackCooldownDuration; // Reset the cooldown timer
             }
             inputMovement = Vector2.zero;
@@ -88,5 +87,10 @@ public class InputHandler : MonoBehaviour
                 settingUI = FindAnyObjectByType<SettingUIController>(FindObjectsInactive.Include).gameObject;
             settingUI.SetActive(!settingUI.activeSelf);
         }
+    }
+
+    public void UpdateAttackKey()
+    {
+        attackKeyCode = PlayerPrefs.GetString("AttackKey","J").Equals("J")? KeyCode.J: KeyCode.F;
     }
 }

@@ -16,11 +16,11 @@ public class SettingUIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        LoadVolumeSettings();
         restartButton.onClick.AddListener(()=>GameManager.Singleton.RestartLevel());
         attackKeyButton.onClick.AddListener(()=>SwapAttackKey());
         musicSlider.onValueChanged.AddListener(SetMusicVolume);
         sfxSlider.onValueChanged.AddListener(SetSFXVolume);
-        LoadVolumeSettings();
         LoadAttackKey();
     }
 
@@ -36,6 +36,7 @@ public class SettingUIController : MonoBehaviour
         PlayerPrefs.SetString("AttackKey", attackKey.Equals("J")?"F":"J");
         PlayerPrefs.Save();
         attackKeyText.SetText(attackKey.Equals("J")?"F":"J");
+        FindAnyObjectByType<InputHandler>().UpdateAttackKey();
     }
 
     void OnEnable()

@@ -8,6 +8,7 @@ public class ShadowPlayerMovement : PlayerMovement
     public LayerMask shadowLayer;
 
     private PlayerState playerState;
+    private ShadowPlayerController shadowPlayerController;
 
     private void Awake() {
         animator = GetComponent<Animator>();
@@ -19,6 +20,7 @@ public class ShadowPlayerMovement : PlayerMovement
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         inputHandler = transform.parent.GetComponent<InputHandler>();
+        shadowPlayerController = GetComponent<ShadowPlayerController>();
     }
 
     private void OnEnable() {
@@ -41,6 +43,16 @@ public class ShadowPlayerMovement : PlayerMovement
             // There is no shadow layer collider beneath the player, perform your desired action here
             playerState.SwitchState();
         }   
+
+        GameObject attachedEnemy = shadowPlayerController.GetAttachedEnemy();
+        if(attachedEnemy != null)
+        {
+            EnemyController enemyController = attachedEnemy.GetComponent<EnemyController>();
+            if(enemyController.movementDirection == EnemyController.MovementDirection.Vertical)
+            {
+                rb.velocity = new Vector2(0, inputHandler.inputMovement.y != 0?  inputHandler.inputMovement.y:rb.velocity.y);
+            }
+        }
     }
 
     private void FixedUpdate() {
@@ -49,6 +61,7 @@ public class ShadowPlayerMovement : PlayerMovement
 
     private void ShadowMovementHandler()
     {
+        Debug.Log(movement);
         Vector2 newPosition = rb.position + movement * Time.fixedDeltaTime;
         bool canMove = IsNormalPlayerWithinCameraBounds() || IsMovingTowardsNormalPlayer(newPosition);
         rb.velocity = canMove? movement:new Vector2(0,rb.velocity.y);

@@ -1,12 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class SwordAttacker : MonoBehaviour 
+public class SwordAttacker : Attacker 
 {
     public GameObject currentSwordPrefab;
 
 
-    public void Attack(Vector2 direction, GameObject player)
+    public override void Attack(Vector2 direction, GameObject player)
     {
         Sword sword = ObjectPool.Singleton.GetObject(currentSwordPrefab, transform.position, Quaternion.identity).GetComponent<Sword>();
         sword.Throw(direction,player);

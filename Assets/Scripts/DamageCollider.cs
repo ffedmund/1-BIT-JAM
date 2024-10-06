@@ -1,24 +1,52 @@
 using UnityEngine;
+using System.Collections;
+using Unity.VisualScripting; // Required for Coroutines
 
-public class DamageCollider : MonoBehaviour {
-    private Rigidbody2D m_rigidbody2D;
-    private float force;
+public class DamageCollider : MonoBehaviour
+{
+    public int damageAmount = 1;
+    public float damageCooldown = 1.0f; // Set cooldown period (in seconds)
 
-    private void Start() {
-        m_rigidbody2D = GetComponent<Rigidbody2D>();
+    private Collider2D damageTrigger; // Reference to the collider.
+    private bool canDealDamage = true; // Flag to check if damage can be dealt.
+
+    private void Start()
+    {
+        damageTrigger = GetComponent<Collider2D>(); // Get the trigger collider.
     }
 
-    private void Update() {
-        force = m_rigidbody2D.velocity.magnitude;
-    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Cooldown check - if the cooldown is active, do nothing
+        if (!canDealDamage)
+            return;
 
-    private void OnCollisionEnter2D(Collision2D other) {
-        if (m_rigidbody2D != null && force > 0)
+        if (other.transform.root.gameObject != transform.root.gameObject)
         {
-            if(other.collider.TryGetComponent(out EnemyController enemy))
+            if (transform.root.CompareTag("Player") && other.TryGetComponent(out EnemyController enemy))
             {
-                enemy.TakeDamage(10);
+                enemy.TakeDamage(damageAmount);
+                StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
+            }
+            else if (other.transform.parent?.TryGetComponent(out PlayerStats player) ?? false)
+            {
+                player.Hurt();
+                StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
             }
         }
+    }
+
+    // Coroutine to handle the cooldown process
+    private IEnumerator DisableDamageForCooldown()
+    {
+        canDealDamage = false;          // Disable damage dealing.
+        damageTrigger.enabled = false;  // Disable the trigger collider during cooldown.
+
+        // Wait for the specified cooldown period
+        yield return new WaitForSeconds(damageCooldown);
+
+        // Re-enable after cooldown
+        damageTrigger.enabled = true;   
+        canDealDamage = true;           // Allow damage dealing again.
     }
 }

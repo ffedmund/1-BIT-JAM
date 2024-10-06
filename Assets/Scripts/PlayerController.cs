@@ -1,13 +1,10 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
-    public Transform keyHolder; // The position where the key will follow the player
-    public float floatAmplitude = 0.5f; // Amplitude of the floating effect
-    public float floatFrequency = 1f; // Frequency of the floating effect
+    public Transform keyHolder;  // The position where the key will follow the player.
+    public float floatAmplitude = 0.5f;  // Amplitude of the floating effect.
+    public float floatFrequency = 1f;    // Frequency of the floating effect.
     public InputHandler inputHandler;
 
     private GameObject collectedKey;
@@ -15,35 +12,57 @@ public class PlayerController : MonoBehaviour
     private float floatTimer;
     private bool isShadowPlayer;
 
-    private void Start() {
+    protected virtual void Start()
+    {
         inputHandler = transform.parent.GetComponent<InputHandler>();
-        isShadowPlayer = transform.TryGetComponent(out ShadowPlayerMovement component);
+
+        // If this player is a ShadowPlayerController, enabling specific shadow behavior.
+        isShadowPlayer = GetType() == typeof(ShadowPlayerController);
     }
 
     private void Update()
     {
+        if (isShadowPlayer)
+        {
+            HandleShadowSpecificBehavior();
+        }
+
+        HandleKeyFloatingEffect();
+        HandleCollision();
+    }
+
+    private void HandleShadowSpecificBehavior()
+    {
+        Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x, 0) * 0.25f;
+        Collider2D hit = Physics2D.OverlapPoint(targetPos);
+        if (hit?.TryGetComponent(out PushableBlock pushableBlock) ?? false)
+        {
+            pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x, 0));
+        }
+    }
+
+    private void HandleKeyFloatingEffect()
+    {
         if (collectedKey != null)
         {
-            // Update the floating effect
+            // Update the floating effect.
             floatTimer += Time.deltaTime * floatFrequency;
             float newY = Mathf.Sin(floatTimer) * floatAmplitude;
             collectedKey.transform.localPosition = keyInitialLocalPosition + new Vector3(0, newY, 0);
         }
+    }
 
-        if(isShadowPlayer)
-        {
-            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x,0) * 0.25f;
-            Collider2D hit = Physics2D.OverlapPoint(targetPos);
-            if(hit?.TryGetComponent(out PushableBlock pushableBlock) ?? false)
-                pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x,0));
-        }
+    private void HandleCollision()
+    {
+        // Logic to handle player collision with pushable blocks.
+        if (collectedKey == null) return;  // Early exit if no key is collected.
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // Key collection.
         if (other.CompareTag("Key"))
         {
-            // Collect the key and set it to follow the player
             collectedKey = other.gameObject;
             collectedKey.transform.SetParent(transform);
             keyInitialLocalPosition = keyHolder.localPosition;
@@ -51,34 +70,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other) {
+    private void OnCollisionEnter2D(Collision2D other)
+    {
         if (other.gameObject.CompareTag("Pushable") && other.gameObject.TryGetComponent(out PushableBlock pushableBlock))
         {
-            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x,0);
+            Vector2 targetPos = (Vector2)transform.position + new Vector2(inputHandler.inputMovement.x, 0);
             Collider2D hit = Physics2D.OverlapPoint(targetPos);
-            if(hit)
-                pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x,0));
+            if (hit) pushableBlock.TryMove(new Vector2(inputHandler.inputMovement.x, 0));
         }
     }
 
-    public bool HasKey()
-    {
-        return collectedKey != null;
-    }
+    // Methods to handle keys
+    public bool HasKey() => collectedKey != null;
 
-    public void ReleaseKey() {
-        if (collectedKey != null)
-        {
-            collectedKey.transform.SetParent(null);
-            collectedKey = null;
-        }
-    }
+    public void ReleaseKey() => collectedKey = null;
 
-    public void UseKey() {
-        if (collectedKey != null)
-        {
-            AudioManager.Singleton?.PlaySFX("Open");
-            Destroy(collectedKey);
-        }
-    }
+    public void UseKey() => Destroy(collectedKey);
 }

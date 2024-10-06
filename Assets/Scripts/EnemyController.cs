@@ -25,11 +25,20 @@ public class EnemyController : MonoBehaviour
     private GameObject player;  // Reference to the player object
     private bool isTracingPlayer = false; // Indicates whether the enemy is in trace mode
 
+    void Awake()
+    {
+        m_collider2D = GetComponent<Collider2D>();
+    }
+
     void Start()
     {
         startingPosition = transform.position;
-        m_collider2D = GetComponent<Collider2D>();
         player = FindAnyObjectByType<PlayerState>().normalPlayer;  // Find the player using its tag
+    }
+
+    void OnEnable()
+    {
+        RaycastToGround();
     }
 
     void Update()
@@ -44,6 +53,33 @@ public class EnemyController : MonoBehaviour
             CheckForGround();
             CheckBounds();
             DetectPlayer();
+        }
+    }
+
+    // Method to perform a raycast downward and move the enemy to the ground
+    void RaycastToGround()
+    {
+        if(movementDirection == MovementDirection.Vertical)
+            return;
+        // Cast a ray from the center of the enemy, aiming downwards, to detect the ground
+        Vector2 rayOrigin = transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, Mathf.Infinity, groundLayer);
+
+        // Debugging, to visualize the ray if needed
+        Debug.DrawRay(rayOrigin, Vector2.down * raycastDistance, Color.red, 2f);
+
+        if (hit.collider != null)
+        {
+            // We have hit ground, now adjust the enemy's position
+            float groundY = hit.point.y;
+
+            // Adjust the enemy position so that the bottom of the collider is at the hit point 
+            transform.position = new Vector2(transform.position.x, Mathf.Round((groundY+0.5f) * 10f) / 10f);
+        }
+        else
+        {
+            // No ground detected, log warning or leave as is
+            Debug.LogWarning("No ground found below. Enemy may be placed incorrectly.");
         }
     }
 
@@ -211,22 +247,6 @@ public class EnemyController : MonoBehaviour
             AudioManager.Singleton?.PlaySFX("Dead");
             Destroy(gameObject);  // Destroy the enemy object
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Player") && other.transform.parent.TryGetComponent(out PlayerStats playerStats))
-        {
-            playerStats.Hurt();
-            StartCoroutine(DisableCollider(1));
-        }
-    }
-
-    IEnumerator DisableCollider(float time)
-    {
-        m_collider2D.enabled = false;
-        yield return new WaitForSeconds(time);
-        m_collider2D.enabled = true;
     }
 
     // Optional: Draw raycasts and detection radius in the editor for visualization
