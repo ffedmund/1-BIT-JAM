@@ -29,7 +29,7 @@ public class DamageCollider : MonoBehaviour
                 enemy.TakeDamage(damageAmount);
                 StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
             }
-            else if (other.transform.parent?.TryGetComponent(out PlayerStats player) ?? false)
+            else if (!other.GetComponent<ShadowPlayerController>() && (other.transform.parent?.TryGetComponent(out PlayerStats player) ?? false))
             {
                 player.Hurt();
                 StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage

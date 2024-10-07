@@ -177,7 +177,7 @@ MonoBehaviour:
   movementBound: 2
   hp: 10
   detectionRadius: 3
-  attackRadius: 10
+  attackRadius: 6
   attackCooldown: 3
   enabledAllTraceMovement: 0
 --- !u!61 &8857007302136748205
