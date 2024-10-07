@@ -42,7 +42,7 @@ public class Door : MonoBehaviour
             player.UseKey();
             isOpened = true;
         }
-        if(isOpened && player)
+        if(isOpened && player && player.GetType() != typeof(ShadowPlayerController))
         {
             player.inputHandler.InteractHandler += GetIn;
         }

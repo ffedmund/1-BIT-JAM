@@ -59,7 +59,7 @@ public class EnemyController : MonoBehaviour
     // Method to perform a raycast downward and move the enemy to the ground
     void RaycastToGround()
     {
-        if(movementDirection == MovementDirection.Vertical)
+        if (movementDirection == MovementDirection.Vertical)
             return;
         // Cast a ray from the center of the enemy, aiming downwards, to detect the ground
         Vector2 rayOrigin = transform.position;
@@ -74,7 +74,7 @@ public class EnemyController : MonoBehaviour
             float groundY = hit.point.y;
 
             // Adjust the enemy position so that the bottom of the collider is at the hit point 
-            transform.position = new Vector2(transform.position.x, Mathf.Round((groundY+0.5f) * 10f) / 10f);
+            transform.position = new Vector2(transform.position.x, Mathf.Round((groundY + 0.5f) * 10f) / 10f);
         }
         else
         {
@@ -105,7 +105,7 @@ public class EnemyController : MonoBehaviour
             }
             else
             {
-                transform.Translate(Vector2.down * moveSpeed  * extraSpeedMultiplier.x * Time.deltaTime);
+                transform.Translate(Vector2.down * moveSpeed * extraSpeedMultiplier.x * Time.deltaTime);
             }
         }
     }
@@ -120,7 +120,7 @@ public class EnemyController : MonoBehaviour
         RaycastHit2D leftGroundCheck = Physics2D.Raycast(checkingPointN, Vector2.down, raycastDistance, groundLayer);
         RaycastHit2D rightGroundCheck = Physics2D.Raycast(checkingPointP, Vector2.down, raycastDistance, groundLayer);
 
-        if(movementDirection == MovementDirection.Horizontal)
+        if (movementDirection == MovementDirection.Horizontal)
         {
             // If no ground is detected on the left side and enemy is moving left, switch to moving right
             if (!leftGroundCheck && !movingRightOrUp)
@@ -206,9 +206,38 @@ public class EnemyController : MonoBehaviour
         if (player != null)
         {
             float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+
+            // Check if player is within detection radius
             if (distanceToPlayer <= detectionRadius)
             {
-                isTracingPlayer = true;
+                // Perform a raycast from enemy to player to see if there is any obstruction (ground layer)
+                Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, distanceToPlayer, groundLayer);
+
+                // Debugging, visualize the raycast
+                Debug.DrawRay(transform.position, directionToPlayer * distanceToPlayer, Color.blue, 0.2f);
+
+                // Check if the raycast hit anything that has the ground layer
+                if (hit.collider == null)
+                {
+                    // No ground layer obstructing, so we can start tracing the player
+                    isTracingPlayer = true;
+                    Debug.Log("Player detected and clear path to player. Start tracing.");
+                }
+                else
+                {
+                    // Ground layer is obstructing the view between enemy and player, don't trace yet
+                    Debug.Log("Player detected, but ground obstruction found. Cannot trace.");
+                }
+            }
+            else
+            {
+                // Player is out of detection radius, stop tracing if was tracing before
+                if (isTracingPlayer)
+                {
+                    Debug.Log("Player moved out of detection radius. Stop tracing.");
+                    isTracingPlayer = false;
+                }
             }
         }
     }
@@ -216,7 +245,7 @@ public class EnemyController : MonoBehaviour
     // Enemy traces the player
     void TracePlayer()
     {
-        if(movementDirection == MovementDirection.Vertical && !enabledAllTraceMovement)
+        if (movementDirection == MovementDirection.Vertical && !enabledAllTraceMovement)
         {
             isTracingPlayer = false;
             return;
@@ -232,7 +261,7 @@ public class EnemyController : MonoBehaviour
                 return;
             }
             // Move towards the player
-            direction = new Vector2(direction.x, enabledAllTraceMovement? direction.y:0);
+            direction = new Vector2(direction.x, enabledAllTraceMovement ? direction.y : 0);
             transform.Translate(direction * moveSpeed * Time.deltaTime);
         }
     }

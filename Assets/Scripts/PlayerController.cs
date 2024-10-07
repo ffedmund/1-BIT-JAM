@@ -61,10 +61,11 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Key collection.
-        if (other.CompareTag("Key") && !other.transform.root.CompareTag("Player"))
+        if (other.CompareTag("Key"))
         {
             collectedKey = other.gameObject;
             collectedKey.transform.SetParent(transform);
+            collectedKey.GetComponent<Collider2D>().enabled = false;
             keyInitialLocalPosition = keyHolder.localPosition;
             collectedKey.transform.localPosition = keyInitialLocalPosition;
         }
@@ -86,6 +87,7 @@ public class PlayerController : MonoBehaviour
     public void ReleaseKey(){
         if(collectedKey != null)
         {
+            collectedKey.GetComponent<Collider2D>().enabled = true;
             collectedKey.transform.SetParent(null);
             collectedKey = null;
         }
