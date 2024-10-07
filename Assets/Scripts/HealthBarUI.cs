@@ -19,17 +19,25 @@ public class HealthBarUI : MonoBehaviour
 
     void UpdateHp(int newHp)
     {
-        int diff = newHp - transform.childCount;
-        for(int i = 0; i < Mathf.Abs(diff); i++)
+        // int diff = newHp - transform.childCount;
+        // for(int i = 0; i < Mathf.Abs(diff); i++)
+        // {
+        //     if(diff > 0)
+        //     {
+        //         Instantiate(heartPrefab,transform);
+        //     }
+        //     else if(transform.childCount > 0)
+        //     {
+        //         Destroy(transform.GetChild(0).gameObject);
+        //     }
+        // } 
+        foreach(Transform child in transform)
         {
-            if(diff > 0)
-            {
-                Instantiate(heartPrefab,transform);
-            }
-            else if(transform.childCount > 0)
-            {
-                Destroy(transform.GetChild(0).gameObject);
-            }
+            Destroy(child.gameObject);
+        }
+        for(int i = 0; i < newHp; i++)
+        {
+            Instantiate(heartPrefab,transform);
         } 
     }
 

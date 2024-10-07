@@ -13,11 +13,11 @@ public class PlayerStats : MonoBehaviour {
         curHp = maxHp;
     }
 
-    public void Hurt()
+    public void Hurt(int damage = 1)
     {
         if(!dead)
         {
-            curHp--;
+            curHp-=damage;
             OnHurt?.Invoke(curHp);
             AudioManager.Singleton?.PlaySFX("Hurt");
             if(curHp <= 0)

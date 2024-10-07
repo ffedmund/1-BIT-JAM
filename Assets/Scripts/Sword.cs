@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using DG.Tweening;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ public class Sword : MonoBehaviour
     }
 
     private void OnEnable() {
+        transform.rotation = Quaternion.Euler(Vector3.zero);
         transform.DORotate(rotationAxis, rotationDuration, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear)
             .SetLoops(-1, LoopType.Incremental);
@@ -42,6 +44,10 @@ public class Sword : MonoBehaviour
             {
                 enemy.TakeDamage(damage);
                 gameObject.SetActive(false);
+            }
+            if(other.transform.parent?.TryGetComponent(out PlayerStats playerStats) ?? false)
+            {
+                playerStats.Hurt(damage);
             }
         }
     }

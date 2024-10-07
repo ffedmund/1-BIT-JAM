@@ -63,6 +63,8 @@ MonoBehaviour:
   pools:
   - prefab: {fileID: 5986077319431927004, guid: 9f43259bbb562475a9afd30d5df0884e, type: 3}
     initialSize: 3
+  - prefab: {fileID: 2062444512097493726, guid: 9c84c8bc876d5f649bb13cbd50541c0a, type: 3}
+    initialSize: 3
   expandable: 1
 --- !u!114 &1988614323033384055
 MonoBehaviour:

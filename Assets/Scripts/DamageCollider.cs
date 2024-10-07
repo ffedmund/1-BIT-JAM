@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting; // Required for Coroutines
+using Unity.VisualScripting;
+using UnityEngine.Tilemaps; // Required for Coroutines
 
 public class DamageCollider : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class DamageCollider : MonoBehaviour
 
         if (other.transform.root.gameObject != transform.root.gameObject)
         {
-            if (transform.root.CompareTag("Player") && other.TryGetComponent(out EnemyController enemy))
+            if ((transform.root.CompareTag("Player") || GetComponent<Tilemap>()) && other.TryGetComponent(out EnemyController enemy))
             {
                 enemy.TakeDamage(damageAmount);
                 StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage

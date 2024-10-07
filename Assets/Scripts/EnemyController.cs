@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -17,13 +18,17 @@ public class EnemyController : MonoBehaviour
     public float movementBound;  // Movement bounds (either horizontal or vertical)
     public int hp = 3;       // Enemy health points (hp)
     public float detectionRadius = 5f; // Radius for detecting the player
+    public float attackRadius = 10f; // Radius for detecting the player
+    public float attackCooldown = 1;
     public bool enabledAllTraceMovement;
 
     private bool movingRightOrUp = true; // True if moving right or up, false for left or down
     private Vector3 startingPosition;
     private Collider2D m_collider2D;
+    private Attacker attacker;
     private GameObject player;  // Reference to the player object
     private bool isTracingPlayer = false; // Indicates whether the enemy is in trace mode
+    private float attackTimer = 0;
 
     void Awake()
     {
@@ -33,6 +38,7 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         startingPosition = transform.position;
+        attacker = GetComponent<Attacker>();
         player = FindAnyObjectByType<PlayerState>().normalPlayer;  // Find the player using its tag
     }
 
@@ -53,6 +59,20 @@ public class EnemyController : MonoBehaviour
             CheckForGround();
             CheckBounds();
             DetectPlayer();
+            Attack();
+        }
+    }
+
+    private void Attack()
+    {
+        if(attacker!=null)
+        {
+            attackTimer += Time.deltaTime;
+            float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+            if(attackRadius < distanceToPlayer || attackTimer <= attackCooldown) return;
+            attackTimer = 0;
+            Vector2 direction = (player.transform.position - transform.position).normalized;
+            attacker?.Attack(direction + new Vector2(0,0.1f), gameObject);
         }
     }
 
@@ -74,7 +94,7 @@ public class EnemyController : MonoBehaviour
             float groundY = hit.point.y;
 
             // Adjust the enemy position so that the bottom of the collider is at the hit point 
-            transform.position = new Vector2(transform.position.x, Mathf.Round((groundY + 0.5f) * 10f) / 10f);
+            transform.position = new Vector2(transform.position.x, Mathf.Round((groundY + 0.5f * (transform.lossyScale.x > 1? transform.lossyScale.x:1)) * 10f) / 10f);
         }
         else
         {
