@@ -71,6 +71,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 6e15185428eb3440996b4924e13fb2fd, type: 3}
   - name: UIClose
     clip: {fileID: 8300000, guid: 4464b0046617b4c65a5297f7fa92d558, type: 3}
+  - name: Fall
+    clip: {fileID: 8300000, guid: ec5a5a8faa3896743922ce17da624edd, type: 3}
   sfxSource: {fileID: 1040908748657127126}
   musicTracks:
   - name: Menu
@@ -79,6 +81,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 1c367815e9d22439aae9e5251e9243b9, type: 3}
   - name: ShadowMeet
     clip: {fileID: 8300000, guid: 31a6af37c5c2f4007adabaf8cee40412, type: 3}
+  - name: Boss
+    clip: {fileID: 8300000, guid: 8f6e310703f14b44dbc38b3e431662f6, type: 3}
   musicSource: {fileID: 7888585633615578849}
 --- !u!1 &1888399438640377160
 GameObject:

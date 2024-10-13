@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -22,20 +23,20 @@ public class EnemyController : MonoBehaviour
     public float attackCooldown = 1;
     public bool enabledAllTraceMovement;
 
-    private bool movingRightOrUp = true; // True if moving right or up, false for left or down
-    private Vector3 startingPosition;
-    private Collider2D m_collider2D;
-    private Attacker attacker;
-    private GameObject player;  // Reference to the player object
-    private bool isTracingPlayer = false; // Indicates whether the enemy is in trace mode
-    private float attackTimer = 0;
+    protected bool movingRightOrUp = true; // True if moving right or up, false for left or down
+    protected Vector3 startingPosition;
+    protected Collider2D m_collider2D;
+    protected Attacker attacker;
+    protected GameObject player;  // Reference to the player object
+    protected bool isTracingPlayer = false; // Indicates whether the enemy is in trace mode
+    protected float attackTimer = 0;
 
     void Awake()
     {
         m_collider2D = GetComponent<Collider2D>();
     }
 
-    void Start()
+    protected virtual void Start()
     {
         startingPosition = transform.position;
         attacker = GetComponent<Attacker>();
@@ -47,7 +48,7 @@ public class EnemyController : MonoBehaviour
         RaycastToGround();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (isTracingPlayer)
         {
@@ -63,7 +64,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void Attack()
+    protected virtual void Attack()
     {
         if(attacker!=null)
         {
@@ -221,7 +222,7 @@ public class EnemyController : MonoBehaviour
     }
 
     // Detect if the player is within the detection radius
-    void DetectPlayer()
+    protected void DetectPlayer()
     {
         if (player != null)
         {
@@ -287,7 +288,7 @@ public class EnemyController : MonoBehaviour
     }
 
     // Reduce the enemy's HP and destroy the enemy if hp <= 0
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         hp -= damage;
         AudioManager.Singleton?.PlaySFX("Hit");

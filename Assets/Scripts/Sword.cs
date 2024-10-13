@@ -34,7 +34,7 @@ public class Sword : MonoBehaviour
     }
 
     private void OnDisable() {
-        DOTween.Clear(transform);
+        DOTween.Kill(transform);
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

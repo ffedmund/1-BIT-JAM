@@ -7,6 +7,7 @@ public class DamageCollider : MonoBehaviour
 {
     public int damageAmount = 1;
     public float damageCooldown = 1.0f; // Set cooldown period (in seconds)
+    public bool enableCooldown = true;
 
     private Collider2D damageTrigger; // Reference to the collider.
     private bool canDealDamage = true; // Flag to check if damage can be dealt.
@@ -27,12 +28,14 @@ public class DamageCollider : MonoBehaviour
             if ((transform.root.CompareTag("Player") || GetComponent<Tilemap>()) && other.TryGetComponent(out EnemyController enemy))
             {
                 enemy.TakeDamage(damageAmount);
-                StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
+                if(enableCooldown)
+                    StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
             }
             else if (!other.GetComponent<ShadowPlayerController>() && (other.transform.parent?.TryGetComponent(out PlayerStats player) ?? false))
             {
                 player.Hurt();
-                StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
+                if(enableCooldown)
+                    StartCoroutine(DisableDamageForCooldown()); // Start cooldown after damage
             }
         }
     }
