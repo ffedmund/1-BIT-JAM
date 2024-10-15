@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class BossController : EnemyController
@@ -18,8 +19,6 @@ public class BossController : EnemyController
     [Header("Ranged Attack Settings")]
     public float rangedRange = 15f;      // Range for ranged attack
     public float rangedCooldown = 2f;
-    public GameObject rangedProjectilePrefab;
-    public Transform firePoint;          // Fire point for ranged projectile
 
     // Special Attack
     [Header("Special Attack Settings")]
@@ -159,14 +158,6 @@ public class BossController : EnemyController
     private void PerformRangedAttack()
     {
         ((BossAttacker)attacker).SweeepAttack();
-        if (rangedProjectilePrefab != null && firePoint != null)
-        {
-            Vector2 attackDirection = (player.transform.position - firePoint.position).normalized;
-            GameObject projectile = Instantiate(rangedProjectilePrefab, firePoint.position, Quaternion.identity);
-            projectile.GetComponent<Rigidbody2D>().velocity = attackDirection * 10f;
-
-            // Set projectile damage or other behavior
-        }
     }
 
     // Special attack method
@@ -176,7 +167,6 @@ public class BossController : EnemyController
         {
             StartCoroutine(SpecialAttackCooldown());
         }
-
     }
 
     #endregion
@@ -209,11 +199,17 @@ public class BossController : EnemyController
     // Optionally override the TakeDamage method to respond to damage events
     public override void TakeDamage(int damage)
     {
-        base.TakeDamage(damage);  // Call base damage processing
+        hp -= damage;
+        AudioManager.Singleton?.PlaySFX("Hit");
         OnHurt?.Invoke(hp);
-        if (hp <= 1)
+        if (hp <= 0)
         {
-            Debug.Log("Boss Enraged! Increasing attack power or speeding up behavior!");
+            AudioManager.Singleton?.PlaySFX("Dead");
+            ((BossAttacker)attacker).DisableDamageCollider();
+            transform.parent.DOShakePosition(3)
+            .OnComplete(
+                ()=>GameManager.Singleton.NextLevel()
+            );
         }
     }
 

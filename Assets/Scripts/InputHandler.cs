@@ -69,7 +69,7 @@ public class InputHandler : MonoBehaviour
         }
 
         // Attack input
-        if ((Input.GetKey(attackKeyCode) || Input.GetMouseButtonDown(0))
+        if ((Input.GetKey(attackKeyCode) || Input.GetMouseButton(0))
             && (playerState.currentState == PlayerStates.Normal? playerState.normalPlayer:playerState.shadowPlayer).TryGetComponent(out Attacker attacker))
         {
             if(attackCooldownTimer <= 0f)

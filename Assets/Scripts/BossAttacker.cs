@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class BossAttacker : Attacker
@@ -54,6 +55,13 @@ public class BossAttacker : Attacker
         useLeftFistNext = distanceToLeftFist < distanceToRightFist;
     }
 
+    public void DisableDamageCollider()
+    {
+        leftFistCollider2D.enabled = false;
+        rightFistCollider2D.enabled = false;
+        isAttacking = true;
+    }
+
     // Overrides Attack to execute the boss-specific attacks
     public override void Attack(Vector2 direction, GameObject player)
     {
@@ -73,7 +81,11 @@ public class BossAttacker : Attacker
 
     public void SweeepAttack()
     {
-        StartCoroutine(Sweep(!useLeftFistNext ? leftFist : rightFist));
+        if (!isAttacking)
+        {
+            ChooseStartingFist();
+            StartCoroutine(Sweep(useLeftFistNext ? leftFist : rightFist));
+        }
     }
 
     // Handles fist attack alternation: decide which fist to raise and then slam
@@ -134,7 +146,7 @@ public class BossAttacker : Attacker
         (fist == rightFist? rightFistCollider2D:leftFistCollider2D).enabled = true;
 
         // Now perform sweeping motion: Move hand from its current position across to opposite side
-        Vector3 endPosition = new Vector3(fist.position.x + sweepRange / 2 * direction, fist.position.y, fist.position.z);
+        Vector3 endPosition = new Vector3(fist.position.x + sweepRange * 0.75f * direction, fist.position.y, fist.position.z);
 
         elapsedTime = 0f;
         while (elapsedTime < sweepTime)
@@ -186,7 +198,7 @@ public class BossAttacker : Attacker
     }
 
     // Let the current fist slam toward the ground (assuming it's over the player)
-    private IEnumerator SlamFist(Transform fist)
+    private IEnumerator SlamFist(Transform fist, bool shockwave = false)
     {
         Vector3 targetPosition = new Vector3(fist.position.x, player.transform.position.y - 0.5f, fist.position.z);  // Fist slams down to player Y position
         (fist == rightFist? rightFistCollider2D:leftFistCollider2D).enabled = true;
@@ -201,7 +213,7 @@ public class BossAttacker : Attacker
 
         // Inflict damage or effects once fist hits the ground
         Debug.Log($"Fist hit player at {fist.position}");
-
+        if(shockwave) InstantiateShockwave(fist);  
         // Reset fist back to its original position after the hit
         yield return StartCoroutine(ResetFistPosition(fist));
     }
@@ -231,15 +243,10 @@ public class BossAttacker : Attacker
         yield return new WaitForSeconds(1);
 
         // Slam both fists down sequentially
-        StartCoroutine(SlamFist(leftFist));
-        StartCoroutine(SlamFist(rightFist));
+        StartCoroutine(SlamFist(leftFist,true));
+        StartCoroutine(SlamFist(rightFist,true));
 
-        yield return new WaitForSeconds(0.5f);
-
-        // After both fists slam, instantiate shockwave
-        InstantiateShockwave(rightFist);
-        InstantiateShockwave(leftFist);        
-
+        yield return new WaitForSeconds(0.5f);      
         isAttacking = false;
     }
 
@@ -248,18 +255,9 @@ public class BossAttacker : Attacker
     {
         if (shockwavePrefab != null)
         {
-            GameObject shockwave = Instantiate(shockwavePrefab, fist.position, Quaternion.identity);
-            // Further customization of shockwave behavior (expand, deal damage, etc.)
-            Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(fist.position, shockwaveRadius);
-
-            foreach (Collider2D playerCollider in hitPlayers)
-            {
-                if (playerCollider.CompareTag("Player") && playerCollider.transform.parent.TryGetComponent(out PlayerStats playerStats))
-                {
-                    // Inflict damage to the player
-                    playerStats.Hurt();
-                }
-            }
+            Vector2 attackDirection = (player.transform.position - fist.position).normalized;
+            GameObject projectile = Instantiate(shockwavePrefab, fist.position+new Vector3(0,0.2f,0), Quaternion.identity);
+            projectile.GetComponent<ShockWave>().SetUp(attackDirection);
 
             Debug.Log("Shockwave instantiated with radius: " + shockwaveRadius);
         }
